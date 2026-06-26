@@ -28,34 +28,11 @@ struct CompletionView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     // Banner at top
-                    if config.bannerImage != nil {
-                        BannerView(
-                            imagePath: config.bannerImage,
-                            height: 150,
-                            contentMode: .fill
-                        )
-                    } else {
-                        // Default gradient banner
-                        ZStack {
-                            Theme.Gradients.banner
-                                .frame(height: 150)
-                            
-                            // Tech pattern overlay
-                            GeometryReader { geometry in
-                                Path { path in
-                                    let width = geometry.size.width
-                                    let spacing: CGFloat = 40
-                                    
-                                    for x in stride(from: 0, through: width, by: spacing) {
-                                        path.move(to: CGPoint(x: x, y: 0))
-                                        path.addLine(to: CGPoint(x: x + 10, y: geometry.size.height))
-                                    }
-                                }
-                                .stroke(Color.white.opacity(0.14), lineWidth: 1)
-                            }
-                            .frame(height: 150)
-                        }
-                    }
+                    BannerView(
+                        imagePath: config.bannerImage,
+                        height: 150,
+                        contentMode: .fill
+                    )
                     
                     // Main content
                     VStack(spacing: Theme.Spacing.lg) {

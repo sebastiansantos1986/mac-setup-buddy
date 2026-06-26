@@ -11,6 +11,7 @@ The app is built with SwiftUI and supports automatic Light Mode and Dark Mode st
 - Guided onboarding flow for macOS setup
 - Welcome, authentication, deployment, recovery, and completion views
 - Adaptive Light Mode and Dark Mode theme
+- Built-in Light Mode and Dark Mode default banner artwork
 - Configurable text, app names, install items, support details, and branding
 - Software deployment progress view with status cards and activity stream
 - Recovery screen for retry, skip, or support handoff
@@ -64,4 +65,5 @@ The package script builds the app and creates an unsigned installer under `dist/
 
 - Review setup workflows before production use, especially local account creation, policy execution, credential handling, and support contact behavior.
 - Keep organization-specific domains, logos, policies, and support contacts in configuration rather than hard-coding them into the app.
+- Set `bannerImage` in configuration to use your own banner instead of the built-in default artwork.
 - Build output under `build/` and package output under `dist/` should stay out of source control.

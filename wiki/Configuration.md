@@ -14,6 +14,16 @@ Mac Setup Buddy is designed to keep organization-specific details configurable.
 - Banner image path
 - Brand colors in `Theme.swift`
 
+## Banner Artwork
+
+The built-in default banner is stored in:
+
+`Mac Setup Buddy/Assets.xcassets/DefaultBanner.imageset`
+
+It includes separate Light Mode and Dark Mode artwork. macOS chooses the correct image automatically.
+
+To use your own banner, set `bannerImage` in configuration. A configured banner image path takes priority over the built-in default banner.
+
 ## Theme
 
 The shared theme lives in:

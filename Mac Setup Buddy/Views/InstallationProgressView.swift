@@ -177,53 +177,11 @@ struct InstallationProgressView: View {
     
     // MARK: - Banner Section
     private var bannerSection: some View {
-        ZStack {
-            if let bannerPath = config.bannerImage, !bannerPath.isEmpty {
-                BannerView(
-                    imagePath: bannerPath,
-                    height: 170,
-                    contentMode: .fill
-                )
-                .overlay(
-                    LinearGradient(
-                        colors: [
-                            Color.black.opacity(0.3),
-                            Color.clear,
-                            Color.black.opacity(0.2)
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                )
-            } else {
-                Theme.Gradients.banner
-                    .frame(height: 170)
-                    .overlay(
-                        GeometryReader { geometry in
-                            ZStack {
-                                Path { path in
-                                    let spacing: CGFloat = 60
-                                    for x in stride(from: -geometry.size.height, through: geometry.size.width, by: spacing) {
-                                        path.move(to: CGPoint(x: x, y: 0))
-                                        path.addLine(to: CGPoint(x: x + geometry.size.height, y: geometry.size.height))
-                                    }
-                                }
-                                .stroke(Color.white.opacity(0.12), lineWidth: 1.5)
-                                
-                                Canvas { context, size in
-                                    let spacing: CGFloat = 30
-                                    for x in stride(from: 0, through: size.width, by: spacing) {
-                                        for y in stride(from: 0, through: size.height, by: spacing) {
-                                            let rect = CGRect(x: x - 1, y: y - 1, width: 2, height: 2)
-                                            context.fill(Path(ellipseIn: rect), with: .color(.white.opacity(0.1)))
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    )
-            }
-        }
+        BannerView(
+            imagePath: config.bannerImage,
+            height: 170,
+            contentMode: .fill
+        )
     }
     
     // MARK: - Header Section

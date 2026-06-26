@@ -91,39 +91,12 @@ struct BannerView: View {
     
     // Default gradient banner when no image is provided
     var defaultBanner: some View {
-        ZStack {
-            Theme.Gradients.banner
+        Image("DefaultBanner")
+            .resizable()
+            .aspectRatio(contentMode: contentMode)
+            .frame(maxWidth: .infinity)
             .frame(height: height)
-            
-            // Decorative pattern overlay
-            GeometryReader { geometry in
-                Path { path in
-                    // Create a wave pattern
-                    let width = geometry.size.width
-                    let waveHeight: CGFloat = 30
-                    
-                    path.move(to: CGPoint(x: 0, y: geometry.size.height))
-                    
-                    for x in stride(from: 0, through: width, by: 10) {
-                        let relativeX = x / width
-                        let y = geometry.size.height - waveHeight * sin(relativeX * .pi * 4)
-                        path.addLine(to: CGPoint(x: x, y: y))
-                    }
-                    
-                    path.addLine(to: CGPoint(x: width, y: geometry.size.height))
-                    path.closeSubpath()
-                }
-                .fill(Color.white.opacity(0.16))
-            }
-            .frame(height: height)
-            
-            // Network pattern overlay
-            Image(systemName: "network")
-                .resizable()
-                .frame(width: 200, height: 200)
-                .foregroundColor(Color.white.opacity(0.14))
-                .offset(x: -50, y: -20)
-        }
+            .clipped()
     }
     
     // MARK: - Image Loading

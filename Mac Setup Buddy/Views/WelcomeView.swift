@@ -27,43 +27,11 @@ struct WelcomeView: View {
             
             VStack(spacing: 0) {
                 // Banner at top
-                if config.bannerImage != nil {
-                    BannerView(
-                        imagePath: config.bannerImage,
-                        height: 120,
-                        contentMode: .fill
-                    )
-                } else {
-                    // Gradient banner - using Theme
-                    ZStack {
-                        Theme.Gradients.banner
-                            .frame(height: 120)
-                        
-                        // Tech pattern overlay
-                        GeometryReader { geometry in
-                            Path { path in
-                                let spacing: CGFloat = 60
-                                for x in stride(from: -geometry.size.height, through: geometry.size.width, by: spacing) {
-                                    path.move(to: CGPoint(x: x, y: 0))
-                                    path.addLine(to: CGPoint(x: x + geometry.size.height, y: geometry.size.height))
-                                }
-                            }
-                            .stroke(Color.white.opacity(0.14), lineWidth: 1.5)
-                        }
-                        .frame(height: 120)
-                        
-                        VStack(spacing: 6) {
-                            Text(config.bannerTitle ?? "Mac Setup Buddy")
-                                .font(Theme.Typography.largeTitle())
-                                .foregroundColor(Theme.Text.primary)
-                            
-                            Text(config.bannerSubtitle ?? "Security. Simplified.")
-                                .font(Theme.Typography.caption())
-                                .fontWeight(.medium)
-                                .foregroundColor(Theme.Text.secondary)
-                        }
-                    }
-                }
+                BannerView(
+                    imagePath: config.bannerImage,
+                    height: 120,
+                    contentMode: .fill
+                )
                 
                 Spacer()
                 

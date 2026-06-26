@@ -60,27 +60,17 @@ struct AADProgressView: View {
             }
 
             VStack(spacing: 0) {
-                // Banner if provided
-                if config.bannerImage != nil {
-                    BannerView(
-                        imagePath: config.bannerImage,
-                        height: 190,
-                        contentMode: .fill
-                    )
-                    .overlay(
-                        LinearGradient(
-                            colors: [Color.clear, Color.black.opacity(0.3)],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-                    
-                    // Cover strip to hide any gaps
-                    Rectangle()
-                        .fill(Theme.Background.tertiary)
-                        .frame(height: 2)
-                        .offset(y: -1)
-                }
+                BannerView(
+                    imagePath: config.bannerImage,
+                    height: 190,
+                    contentMode: .fill
+                )
+                
+                // Cover strip to hide any gaps
+                Rectangle()
+                    .fill(Theme.Background.tertiary)
+                    .frame(height: 2)
+                    .offset(y: -1)
 
                 // Main content
                 VStack(spacing: Theme.Spacing.sm) {

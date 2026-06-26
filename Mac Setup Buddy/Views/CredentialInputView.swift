@@ -76,32 +76,7 @@ struct CredentialInputView: View {
     
     // MARK: - Banner Section
     private var bannerSection: some View {
-        ZStack {
-            if let bannerPath = config.bannerImage, !bannerPath.isEmpty {
-                BannerView(imagePath: bannerPath, height: 140, contentMode: .fill)
-                    .overlay(
-                        LinearGradient(
-                            colors: [Color.black.opacity(0.4), Color.clear],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                    )
-            } else {
-                Theme.Gradients.banner
-                    .frame(height: 140)
-                    .overlay(
-                        VStack(spacing: Theme.Spacing.xs) {
-                            Text(config.bannerTitle ?? "Mac Setup Buddy")
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
-                                .foregroundColor(Theme.Text.primary)
-                            
-                            Text(config.bannerSubtitle ?? "Enterprise Sign-In")
-                                .font(Theme.Typography.body())
-                                .foregroundColor(Theme.Text.secondary)
-                        }
-                    )
-            }
-        }
+        BannerView(imagePath: config.bannerImage, height: 140, contentMode: .fill)
     }
     
     // MARK: - Form View
