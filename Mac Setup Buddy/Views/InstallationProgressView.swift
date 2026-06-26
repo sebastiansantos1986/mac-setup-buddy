@@ -101,6 +101,7 @@ struct InstallationProgressView: View {
                     error: error,
                     policyName: currentItemIndex < items.count ? items[currentItemIndex].name : nil,
                     diagnosticInfo: generateDiagnosticInfo(),
+                    bannerImage: config.bannerImage,
                     onAction: handleErrorAction
                 )
                 .transition(.opacity)

@@ -29,13 +29,13 @@ struct WelcomeView: View {
                 // Banner at top
                 BannerView(
                     imagePath: config.bannerImage,
-                    height: 120,
+                    height: 110,
                     contentMode: .fill
                 )
                 
-                Spacer()
+                Spacer(minLength: Theme.Spacing.sm)
                 
-                VStack(spacing: Theme.Spacing.xl) {
+                VStack(spacing: Theme.Spacing.lg) {
                     // Icon with glow effect
                     ZStack {
                         // Glow layers
@@ -53,7 +53,7 @@ struct WelcomeView: View {
                                         endRadius: 60
                                     )
                                 )
-                                .frame(width: 120, height: 120)
+                                .frame(width: 96, height: 96)
                                 .scaleEffect(glowAnimation ? 1.2 : 0.8)
                                 .animation(
                                     .easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -63,7 +63,7 @@ struct WelcomeView: View {
                         
                         Circle()
                             .fill(Theme.Gradients.iconCircle)
-                            .frame(width: 80, height: 80)
+                            .frame(width: 68, height: 68)
                             .shadow(
                                 color: Theme.Shadows.glow(Theme.Brand.primary).color,
                                 radius: Theme.Shadows.glow().radius,
@@ -71,7 +71,7 @@ struct WelcomeView: View {
                             )
                         
                         Image(systemName: config.welcomeIcon ?? "arrow.down.doc.fill")
-                            .font(.system(size: 36, weight: .medium))
+                            .font(.system(size: 30, weight: .medium))
                             .foregroundColor(Theme.Text.primary)
                     }
                     .scaleEffect(iconAppeared ? 1 : 0.5)
@@ -95,7 +95,7 @@ struct WelcomeView: View {
                     }
                     
                     // Message and steps card
-                    VStack(alignment: .leading, spacing: Theme.Spacing.lg) {
+                    VStack(alignment: .leading, spacing: Theme.Spacing.md) {
                         // Message
                         Text(config.message ?? "Let's configure your Mac for enterprise use.")
                             .font(Theme.Typography.bodyBold())
@@ -106,7 +106,7 @@ struct WelcomeView: View {
                             .padding(.bottom, Theme.Spacing.xxs)
                         
                         // Steps
-                        VStack(alignment: .leading, spacing: 14) {
+                        VStack(alignment: .leading, spacing: 10) {
                             if let step1 = config.welcomeStep1 {
                                 SimpleStepRow(icon: "checkmark.circle.fill", text: step1, color: Theme.Status.success)
                             }
@@ -121,7 +121,7 @@ struct WelcomeView: View {
                             }
                         }
                     }
-                    .padding(Theme.Spacing.xl)
+                    .padding(Theme.Spacing.lg)
                     .glassCard(cornerRadius: Theme.CornerRadius.large)
                     .frame(maxWidth: 650)
                     .opacity(stepsAppeared ? 1 : 0)
@@ -151,7 +151,7 @@ struct WelcomeView: View {
                         }
                         .foregroundColor(.white)
                         .padding(.horizontal, Theme.Spacing.xxl)
-                        .padding(.vertical, 14)
+                        .padding(.vertical, 12)
                         .background(Theme.Gradients.primaryButton)
                         .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.pill))
                         .shadow(
@@ -176,7 +176,7 @@ struct WelcomeView: View {
                 }
                 .padding(.horizontal, Theme.Spacing.xxxl)
                 
-                Spacer()
+                Spacer(minLength: Theme.Spacing.md)
             }
         }
         .frame(width: config.windowWidth, height: config.windowHeight)

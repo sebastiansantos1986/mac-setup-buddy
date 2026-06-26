@@ -30,12 +30,12 @@ struct CompletionView: View {
                     // Banner at top
                     BannerView(
                         imagePath: config.bannerImage,
-                        height: 150,
+                        height: 130,
                         contentMode: .fill
                     )
                     
                     // Main content
-                    VStack(spacing: Theme.Spacing.lg) {
+                    VStack(spacing: Theme.Spacing.md) {
                         // Success checkmark with glow
                         ZStack {
                             // Glow layers
@@ -52,7 +52,7 @@ struct CompletionView: View {
                                             endRadius: 60 + Double(index) * 20
                                         )
                                     )
-                                    .frame(width: 150, height: 150)
+                                    .frame(width: 120, height: 120)
                                     .scaleEffect(glowAnimation ? 1.2 : 0.8)
                                     .animation(
                                         .easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -63,7 +63,7 @@ struct CompletionView: View {
                             // Main checkmark circle
                             Circle()
                                 .fill(Theme.Gradients.success)
-                                .frame(width: 80, height: 80)
+                                .frame(width: 72, height: 72)
                                 .shadow(
                                     color: Theme.Status.success.opacity(0.6),
                                     radius: 20,
@@ -82,12 +82,12 @@ struct CompletionView: View {
                                 )
                                 .overlay(
                                     Image(systemName: "checkmark")
-                                        .font(.system(size: 40, weight: .bold))
+                                        .font(.system(size: 36, weight: .bold))
                                         .foregroundColor(.white)
                                 )
                                 .scaleEffect(checkmarkScale)
                         }
-                        .padding(.top, Theme.Spacing.lg)
+                        .padding(.top, Theme.Spacing.md)
                         .onAppear {
                             withAnimation(Theme.Animation.spring) {
                                 checkmarkScale = 1
@@ -136,7 +136,7 @@ struct CompletionView: View {
                             .opacity(cardsAppeared ? 1 : 0)
                             .offset(x: cardsAppeared ? 0 : 50)
                         }
-                        .frame(height: 240)
+                        .frame(height: 224)
                         .padding(.horizontal, Theme.Spacing.xxxl)
                         .onAppear {
                             withAnimation(.easeOut(duration: Theme.Animation.verySlow).delay(0.5)) {
@@ -157,7 +157,7 @@ struct CompletionView: View {
                             }
                             .foregroundColor(.white)
                             .padding(.horizontal, 45)
-                            .padding(.vertical, 14)
+                            .padding(.vertical, 12)
                             .background(Theme.Gradients.primaryButton)
                             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.pill))
                             .shadow(
@@ -173,8 +173,8 @@ struct CompletionView: View {
                             isHovered = hovering
                         }
                         .keyboardShortcut(.defaultAction)
-                        .padding(.top, Theme.Spacing.sm)
-                        .padding(.bottom, Theme.Spacing.xl)
+                        .padding(.top, Theme.Spacing.xs)
+                        .padding(.bottom, Theme.Spacing.lg)
                     }
                 }
             }

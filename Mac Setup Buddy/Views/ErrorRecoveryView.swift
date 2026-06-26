@@ -106,6 +106,7 @@ struct ErrorRecoveryView: View {
     let error: InstallationError
     let policyName: String?
     let diagnosticInfo: String
+    let bannerImage: String?
     let onAction: (RecoveryAction) -> Void
     
     @State private var isHoveredRetry = false
@@ -116,6 +117,20 @@ struct ErrorRecoveryView: View {
     @State private var copied = false
     @State private var exportedPath: String? = nil
     
+    init(
+        error: InstallationError,
+        policyName: String?,
+        diagnosticInfo: String,
+        bannerImage: String? = nil,
+        onAction: @escaping (RecoveryAction) -> Void
+    ) {
+        self.error = error
+        self.policyName = policyName
+        self.diagnosticInfo = diagnosticInfo
+        self.bannerImage = bannerImage
+        self.onAction = onAction
+    }
+    
     var body: some View {
         ZStack {
             // Background
@@ -123,6 +138,12 @@ struct ErrorRecoveryView: View {
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
+                BannerView(
+                    imagePath: bannerImage,
+                    height: 120,
+                    contentMode: .fill
+                )
+                
                 // Error banner at top
                 HStack {
                     Image(systemName: "exclamationmark.triangle.fill")
@@ -135,11 +156,12 @@ struct ErrorRecoveryView: View {
                         .font(Theme.Typography.mono(size: 11))
                         .foregroundColor(Theme.Text.muted)
                 }
-                .padding(Theme.Spacing.sm)
+                .padding(.horizontal, Theme.Spacing.md)
+                .padding(.vertical, Theme.Spacing.xs)
                 .background(error.color.opacity(0.15))
                 
                 ScrollView {
-                    VStack(spacing: Theme.Spacing.xl) {
+                    VStack(spacing: Theme.Spacing.lg) {
                         // Error Icon with glow
                         ZStack {
                             // Glow effect
@@ -152,7 +174,7 @@ struct ErrorRecoveryView: View {
                                         endRadius: 70
                                     )
                                 )
-                                .frame(width: 140, height: 140)
+                                .frame(width: 112, height: 112)
                                 .scaleEffect(glowAnimation ? 1.2 : 0.9)
                                 .animation(
                                     .easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -168,14 +190,14 @@ struct ErrorRecoveryView: View {
                                         endPoint: .bottomTrailing
                                     )
                                 )
-                                .frame(width: 90, height: 90)
+                                .frame(width: 74, height: 74)
                                 .shadow(color: error.color.opacity(0.5), radius: 20, y: 5)
                             
                             Image(systemName: error.icon)
-                                .font(.system(size: 40, weight: .semibold))
+                                .font(.system(size: 34, weight: .semibold))
                                 .foregroundColor(Theme.Text.primary)
                         }
-                        .padding(.top, Theme.Spacing.xl)
+                        .padding(.top, Theme.Spacing.md)
                         .onAppear { glowAnimation = true }
                         
                         // Error title and description
@@ -238,7 +260,7 @@ struct ErrorRecoveryView: View {
                                 }
                             }
                         }
-                        .padding(Theme.Spacing.lg)
+                        .padding(Theme.Spacing.md)
                         .glassCard()
                         .padding(.horizontal, Theme.Spacing.xl)
                         
@@ -309,7 +331,7 @@ struct ErrorRecoveryView: View {
                                         
                                         Spacer()
                                         
-                                        if let path = exportedPath {
+                                        if exportedPath != nil {
                                             Text("Saved to Desktop")
                                                 .font(Theme.Typography.small())
                                                 .foregroundColor(Theme.Status.success)
@@ -520,4 +542,3 @@ struct InlineErrorBanner: View {
 }
 
 // MARK: - Preview
-

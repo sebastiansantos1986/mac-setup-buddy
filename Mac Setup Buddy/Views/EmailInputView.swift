@@ -27,11 +27,11 @@ struct EmailInputView: View {
             Theme.Gradients.background
                 .ignoresSafeArea()
             
-            VStack(spacing: Theme.Spacing.xl) {
+            VStack(spacing: Theme.Spacing.lg) {
                 // Banner area - using BannerView component
                 BannerView(
                     imagePath: config.bannerImage,
-                    height: 250,
+                    height: 220,
                     contentMode: .fill
                 )
                 
@@ -52,7 +52,7 @@ struct EmailInputView: View {
                                     endRadius: 70
                                 )
                             )
-                            .frame(width: 140, height: 140)
+                            .frame(width: 112, height: 112)
                             .scaleEffect(glowAnimation ? 1.1 : 0.9)
                             .animation(
                                 .easeInOut(duration: 2).repeatForever(autoreverses: true),
@@ -63,7 +63,7 @@ struct EmailInputView: View {
                     // Circular gradient background for icon
                     Circle()
                         .fill(Theme.Gradients.accent)
-                        .frame(width: 100, height: 100)
+                        .frame(width: 84, height: 84)
                         .shadow(
                             color: Theme.Brand.tertiary.opacity(0.5),
                             radius: 20,
@@ -72,10 +72,10 @@ struct EmailInputView: View {
                     
                     Image(systemName: "envelope.fill")
                         .resizable()
-                        .frame(width: 45, height: 35)
+                        .frame(width: 38, height: 30)
                         .foregroundColor(.white)
                 }
-                .padding(.top, -30)
+                .padding(.top, -26)
                 .scaleEffect(iconAppeared ? 1 : 0.5)
                 .opacity(iconAppeared ? 1 : 0)
                 .onAppear {
@@ -138,7 +138,7 @@ struct EmailInputView: View {
                 .opacity(formAppeared ? 1 : 0)
                 .offset(y: formAppeared ? 0 : 10)
                 
-                Spacer()
+                Spacer(minLength: Theme.Spacing.sm)
                 
                 // Buttons
                 HStack(spacing: Theme.Spacing.lg) {
@@ -213,7 +213,7 @@ struct EmailInputView: View {
                         .font(Theme.Typography.captionBold())
                         .foregroundColor(Theme.Text.disabled)
                 }
-                .padding(.bottom, Theme.Spacing.lg)
+                .padding(.bottom, Theme.Spacing.md)
             }
         }
         .frame(minWidth: config.windowWidth, minHeight: config.windowHeight)
