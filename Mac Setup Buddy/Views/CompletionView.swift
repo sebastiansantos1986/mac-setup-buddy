@@ -16,7 +16,9 @@ struct CompletionView: View {
     @State private var checkmarkScale: CGFloat = 0
     @State private var glowAnimation = false
     @State private var isHovered = false
+    @State private var isHoveredExport = false
     @State private var cardsAppeared = false
+    @State private var exportedPath: String? = nil
     
     var body: some View {
         ZStack {
@@ -144,35 +146,76 @@ struct CompletionView: View {
                             }
                         }
                         
-                        // Exit Setup button
-                        Button(action: {
-                            onExit?()
-                            NSApplication.shared.terminate(nil)
-                        }) {
-                            HStack(spacing: Theme.Spacing.xs) {
-                                Text("Exit Setup")
-                                    .font(Theme.Typography.headline())
-                                Image(systemName: "arrow.right.circle.fill")
-                                    .font(.system(size: 18))
+                        VStack(spacing: Theme.Spacing.sm) {
+                            HStack(spacing: Theme.Spacing.md) {
+                                Button(action: exportSupportReport) {
+                                    HStack(spacing: Theme.Spacing.xs) {
+                                        Image(systemName: "square.and.arrow.down")
+                                            .font(.system(size: 15, weight: .semibold))
+                                        Text(exportedPath == nil ? "Export Report" : "Report Saved")
+                                            .font(Theme.Typography.captionBold())
+                                    }
+                                    .foregroundColor(exportedPath == nil ? Theme.Text.secondary : Theme.Status.success)
+                                    .padding(.horizontal, Theme.Spacing.lg)
+                                    .padding(.vertical, 11)
+                                    .background(
+                                        RoundedRectangle(cornerRadius: Theme.CornerRadius.pill)
+                                            .fill(Theme.Background.cardElevated)
+                                            .overlay(
+                                                RoundedRectangle(cornerRadius: Theme.CornerRadius.pill)
+                                                    .stroke(
+                                                        exportedPath == nil ? Theme.Border.highlighted : Theme.Status.success.opacity(0.4),
+                                                        lineWidth: 1
+                                                    )
+                                            )
+                                    )
+                                    .scaleEffect(isHoveredExport ? 1.03 : 1.0)
+                                    .animation(Theme.Animation.smooth, value: isHoveredExport)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .onHover { hovering in
+                                    isHoveredExport = hovering
+                                }
+
+                                Button(action: {
+                                    onExit?()
+                                    NSApplication.shared.terminate(nil)
+                                }) {
+                                    HStack(spacing: Theme.Spacing.xs) {
+                                        Text("Exit Setup")
+                                            .font(Theme.Typography.headline())
+                                        Image(systemName: "arrow.right.circle.fill")
+                                            .font(.system(size: 18))
+                                    }
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 45)
+                                    .padding(.vertical, 12)
+                                    .background(Theme.Gradients.primaryButton)
+                                    .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.pill))
+                                    .shadow(
+                                        color: Theme.Brand.primary.opacity(isHovered ? 0.5 : 0.3),
+                                        radius: 20,
+                                        y: 5
+                                    )
+                                    .scaleEffect(isHovered ? 1.05 : 1.0)
+                                    .animation(Theme.Animation.smooth, value: isHovered)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .onHover { hovering in
+                                    isHovered = hovering
+                                }
+                                .keyboardShortcut(.defaultAction)
                             }
-                            .foregroundColor(.white)
-                            .padding(.horizontal, 45)
-                            .padding(.vertical, 12)
-                            .background(Theme.Gradients.primaryButton)
-                            .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.pill))
-                            .shadow(
-                                color: Theme.Brand.primary.opacity(isHovered ? 0.5 : 0.3),
-                                radius: 20,
-                                y: 5
-                            )
-                            .scaleEffect(isHovered ? 1.05 : 1.0)
-                            .animation(Theme.Animation.smooth, value: isHovered)
+
+                            if let exportedPath {
+                                Text("Saved to \(exportedPath)")
+                                    .font(Theme.Typography.small())
+                                    .foregroundColor(Theme.Text.muted)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .padding(.horizontal, Theme.Spacing.xxxl)
+                            }
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        .onHover { hovering in
-                            isHovered = hovering
-                        }
-                        .keyboardShortcut(.defaultAction)
                         .padding(.top, Theme.Spacing.xs)
                         .padding(.bottom, Theme.Spacing.lg)
                     }
@@ -180,6 +223,15 @@ struct CompletionView: View {
             }
         }
         .frame(width: config.windowWidth, height: config.windowHeight)
+    }
+
+    private func exportSupportReport() {
+        do {
+            let fileURL = try SupportReportExporter.exportCompletionReport(config: config)
+            exportedPath = fileURL.path
+        } catch {
+            print("Failed to export support report: \(error)")
+        }
     }
 }
 

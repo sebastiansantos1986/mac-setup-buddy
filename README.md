@@ -15,6 +15,7 @@ The app is built with SwiftUI and supports automatic Light Mode and Dark Mode st
 - Configurable text, app names, install items, support details, and branding
 - Runtime Preview Mode for reviewing screens without running setup actions
 - JSON configuration with a published schema and sample file
+- Support report export from recovery and completion screens
 - Software deployment progress view with status cards and activity stream
 - Recovery screen for retry, skip, or support handoff
 - Cleaned public project naming and package script
@@ -77,6 +78,10 @@ The schema and sample config live in:
 - [config/sample-config.json](config/sample-config.json)
 
 Use `branding.bannerImagePath` to set a custom banner. Leave it out to use the built-in adaptive Light/Dark banner.
+
+## Support Reports
+
+The Error Recovery and Setup Complete screens can export a JSON support report to the Desktop. Reports include the timestamp, computer name, user/device details when available, FileVault state, failed policy details, and diagnostics.
 
 ## Package
 

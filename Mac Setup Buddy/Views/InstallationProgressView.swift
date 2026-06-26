@@ -754,7 +754,7 @@ struct InstallationProgressView: View {
         info += "Skipped Items: \(skippedItems.count)\n\n"
         
         info += "=== Installation Summary ===\n"
-        for (index, item) in items.enumerated() {
+        for item in items {
             let status = item.status == .completed ? "✅" : item.status == .failed ? "❌" : item.status == .installing ? "⏳" : "⏸"
             let skipped = skippedItems.contains(item.policyUUID) ? " (SKIPPED)" : ""
             info += "\(status) \(item.name): \(item.status)\(skipped)\n"

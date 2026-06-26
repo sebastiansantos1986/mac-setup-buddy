@@ -315,10 +315,10 @@ struct ErrorRecoveryView: View {
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                         
-                                        Button(action: { exportLogs() }) {
+                                        Button(action: { exportReport() }) {
                                             HStack(spacing: 4) {
                                                 Image(systemName: "square.and.arrow.up")
-                                                Text("Export Logs")
+                                                Text("Export Report")
                                             }
                                             .font(Theme.Typography.small())
                                             .foregroundColor(Theme.Text.secondary)
@@ -332,7 +332,7 @@ struct ErrorRecoveryView: View {
                                         Spacer()
                                         
                                         if exportedPath != nil {
-                                            Text("Saved to Desktop")
+                                            Text("Report saved")
                                                 .font(Theme.Typography.small())
                                                 .foregroundColor(Theme.Status.success)
                                         }
@@ -381,17 +381,17 @@ struct ErrorRecoveryView: View {
         }
     }
     
-    private func exportLogs() {
-        let desktopPath = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first!
-        let fileName = "MacSetupBuddy_Diagnostics_\(Date().timeIntervalSince1970).txt"
-        let filePath = desktopPath.appendingPathComponent(fileName)
-        
+    private func exportReport() {
         do {
-            try diagnosticInfo.write(to: filePath, atomically: true, encoding: .utf8)
+            let filePath = try SupportReportExporter.exportErrorReport(
+                error: error,
+                policyName: policyName,
+                diagnosticInfo: diagnosticInfo
+            )
             exportedPath = filePath.path
             onAction(.exportLogs)
         } catch {
-            print("Failed to export logs: \(error)")
+            print("Failed to export report: \(error)")
         }
     }
 }
