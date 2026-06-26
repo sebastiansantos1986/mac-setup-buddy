@@ -1,0 +1,16 @@
+.DS_Store
+__MACOSX/
+
+build/
+dist/
+DerivedData/
+*.xcactivitylog
+
+*.user
+*.xcuserstate
+*.moved-aside
+
+Mac Setup Buddy.xcodeproj/xcuserdata/
+
+debug_output.log
+*.log

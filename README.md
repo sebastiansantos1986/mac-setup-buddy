@@ -1,0 +1,67 @@
+# Mac Setup Buddy
+
+Mac Setup Buddy is a macOS setup assistant for guided device onboarding. It gives users a clean setup flow for welcome messaging, user authentication, network readiness, software deployment, error recovery, and final device summary screens.
+
+The app is built with SwiftUI and supports automatic Light Mode and Dark Mode styling based on the Mac's current appearance.
+
+![Welcome screen](docs/screenshots/welcome.png)
+
+## Highlights
+
+- Guided onboarding flow for macOS setup
+- Welcome, authentication, deployment, recovery, and completion views
+- Adaptive Light Mode and Dark Mode theme
+- Configurable text, app names, install items, support details, and branding
+- Software deployment progress view with status cards and activity stream
+- Recovery screen for retry, skip, or support handoff
+- Cleaned public project naming and package script
+
+## Screen Views
+
+| Screen | Purpose |
+| --- | --- |
+| Welcome | Introduces the setup process and expected steps. |
+| User Authentication | Collects the user's work email before continuing setup. |
+| Software Deployment | Shows installation progress, status, and activity logs. |
+| Error Recovery | Gives clear actions when an install stalls or fails. |
+| Setup Complete | Summarizes user profile and device readiness. |
+
+See [docs/SCREEN_VIEWS.md](docs/SCREEN_VIEWS.md) for the full screen gallery.
+
+## Wiki
+
+Project wiki pages are included in the [wiki](wiki) folder so they can be pushed to the GitHub Wiki or read directly in the repository:
+
+- [Home](wiki/Home.md)
+- [Screen Views](wiki/Screen-Views.md)
+- [Configuration](wiki/Configuration.md)
+- [Build and Packaging](wiki/Build-and-Packaging.md)
+- [Troubleshooting](wiki/Troubleshooting.md)
+
+## Build
+
+Open `Mac Setup Buddy.xcodeproj` in Xcode, then build the `Mac Setup Buddy` scheme.
+
+Command line:
+
+```bash
+xcodebuild \
+  -project "Mac Setup Buddy.xcodeproj" \
+  -scheme "Mac Setup Buddy" \
+  -configuration Debug \
+  build
+```
+
+## Package
+
+The package script builds the app and creates an unsigned installer under `dist/`.
+
+```bash
+./build_package.sh
+```
+
+## Notes
+
+- Review setup workflows before production use, especially local account creation, policy execution, credential handling, and support contact behavior.
+- Keep organization-specific domains, logos, policies, and support contacts in configuration rather than hard-coding them into the app.
+- Build output under `build/` and package output under `dist/` should stay out of source control.
