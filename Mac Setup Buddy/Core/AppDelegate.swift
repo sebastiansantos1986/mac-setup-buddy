@@ -75,6 +75,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     // MARK: - Build Content View
     private func buildContentView(for screen: ViewState, config: CommandLineConfig) -> AnyView {
+        if config.previewMode {
+            return AnyView(
+                PreviewModeView(config: config, onExit: {
+                    self.closeWindowOnly()
+                })
+            )
+        }
+
         switch screen {
         case .welcome:
             return AnyView(
@@ -174,11 +182,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             
         case .error:
             return AnyView(
-                NotificationView(
-                    title: config.title ?? "Error",
-                    message: config.message ?? "An error occurred",
-                    icon: "xmark.circle.fill",
-                    buttons: ["OK"],
+                ErrorRecoveryView(
+                    error: .policyFailed(
+                        name: config.title ?? "Setup Step",
+                        reason: config.message ?? "An error occurred during setup."
+                    ),
+                    policyName: config.title,
+                    diagnosticInfo: config.message ?? "No diagnostic details were provided.",
+                    bannerImage: config.bannerImage,
                     onAction: { _ in
                         self.exitWithCode(1)
                     }

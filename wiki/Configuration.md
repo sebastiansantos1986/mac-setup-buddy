@@ -12,7 +12,43 @@ Mac Setup Buddy is designed to keep organization-specific details configurable.
 - Authentication placeholder text
 - Installation item names, descriptions, icons, and triggers
 - Banner image path
+- Preview Mode behavior
 - Brand colors in `Theme.swift`
+
+## JSON Configuration
+
+Mac Setup Buddy supports JSON configuration through `--config`.
+
+```bash
+open "Mac Setup Buddy.app" --args --config /Library/Application\ Support/Mac\ Setup\ Buddy/config.json
+```
+
+The repository includes:
+
+- `config/mac-setup-buddy.schema.json`
+- `config/sample-config.json`
+
+Use the schema in your editor to validate keys and catch typos before deployment.
+
+## Preview Mode
+
+Preview Mode lets admins review the app screens without running installs, policies, scripts, or account actions.
+
+```bash
+open "Mac Setup Buddy.app" --args --preview
+```
+
+Preview Mode can also be enabled in JSON:
+
+```json
+{
+  "ui": {
+    "previewMode": true,
+    "windowWidth": 1180,
+    "windowHeight": 780
+  }
+}
+```
 
 ## Banner Artwork
 
@@ -22,7 +58,7 @@ The built-in default banner is stored in:
 
 It includes separate Light Mode and Dark Mode artwork. macOS chooses the correct image automatically.
 
-To use your own banner, set `bannerImage` in configuration. A configured banner image path takes priority over the built-in default banner.
+To use your own banner, set `branding.bannerImagePath` in configuration. A configured banner image path takes priority over the built-in default banner.
 
 ## Theme
 

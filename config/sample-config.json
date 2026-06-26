@@ -1,0 +1,74 @@
+{
+  "$schema": "./mac-setup-buddy.schema.json",
+  "branding": {
+    "companyName": "Mac Setup Buddy",
+    "welcomeMessage": "Let's get your Mac configured for secure access. This process will verify your account, prepare your device, and install required apps.",
+    "loginMessage": "Please enter your work email address",
+    "helpContactInfo": "Contact IT Support at support@example.com"
+  },
+  "authentication": {
+    "oktaDomain": "example.okta.com",
+    "allowedDomains": ["example.com"],
+    "requireMFA": true
+  },
+  "ui": {
+    "previewMode": true,
+    "defaultScreen": "welcome",
+    "windowWidth": 1180,
+    "windowHeight": 780,
+    "fullscreen": false,
+    "showLanguageSelector": true,
+    "showNetworkSelector": true
+  },
+  "setupSteps": [
+    {
+      "id": "rosetta",
+      "title": "Rosetta 2",
+      "description": "Intel app support",
+      "icon": "cpu",
+      "type": "policy",
+      "action": {
+        "policyTrigger": "install-rosetta"
+      },
+      "autoAdvance": true,
+      "timeout": 300
+    },
+    {
+      "id": "identity-agent",
+      "title": "Identity Agent",
+      "description": "Authentication service",
+      "icon": "person.badge.key",
+      "type": "policy",
+      "action": {
+        "policyTrigger": "install-identity-agent"
+      },
+      "autoAdvance": true,
+      "timeout": 600
+    },
+    {
+      "id": "teams",
+      "title": "Microsoft Teams",
+      "description": "Collaboration platform",
+      "icon": "bubble.left.and.bubble.right.fill",
+      "type": "policy",
+      "action": {
+        "policyTrigger": "install-teams"
+      },
+      "autoAdvance": true,
+      "timeout": 720
+    }
+  ],
+  "policies": {
+    "jamfBinaryPath": "/usr/local/bin/jamf",
+    "finalPolicy": "setup-complete"
+  },
+  "completion": {
+    "title": "Setup Complete!",
+    "message": "Your Mac is ready to use."
+  },
+  "advanced": {
+    "debugMode": true,
+    "logPath": "/var/log/mac-setup-buddy.log",
+    "bypassOnError": false
+  }
+}

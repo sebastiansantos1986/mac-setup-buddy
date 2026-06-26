@@ -35,6 +35,7 @@ struct CommandLineConfig {
     
     // JSON Configuration file path
     var configFilePath: String? = nil
+    var previewMode: Bool = false
     
     // NEW: Persistent Blur Mode
     var blurMode: BlurMode = .perWindow          // Default to legacy behavior
@@ -45,6 +46,7 @@ struct CommandLineConfig {
     var subtitle: String?
     var message: String?
     var bannerImage: String?
+    var logoImage: String?
     
     // Welcome screen specific
     var bannerTitle: String?

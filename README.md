@@ -13,6 +13,8 @@ The app is built with SwiftUI and supports automatic Light Mode and Dark Mode st
 - Adaptive Light Mode and Dark Mode theme
 - Built-in Light Mode and Dark Mode default banner artwork
 - Configurable text, app names, install items, support details, and branding
+- Runtime Preview Mode for reviewing screens without running setup actions
+- JSON configuration with a published schema and sample file
 - Software deployment progress view with status cards and activity stream
 - Recovery screen for retry, skip, or support handoff
 - Cleaned public project naming and package script
@@ -52,6 +54,29 @@ xcodebuild \
   -configuration Debug \
   build
 ```
+
+## Preview Mode
+
+Preview Mode opens a screen gallery for Welcome, Authentication, Deployment, Recovery, and Completion. It uses the same UI components, banner logic, and Light/Dark Mode appearance as the production screens, but it does not run installs or policies.
+
+```bash
+open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args --preview
+```
+
+You can also launch Preview Mode from JSON:
+
+```bash
+open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args --config config/sample-config.json
+```
+
+## JSON Configuration
+
+The schema and sample config live in:
+
+- [config/mac-setup-buddy.schema.json](config/mac-setup-buddy.schema.json)
+- [config/sample-config.json](config/sample-config.json)
+
+Use `branding.bannerImagePath` to set a custom banner. Leave it out to use the built-in adaptive Light/Dark banner.
 
 ## Package
 

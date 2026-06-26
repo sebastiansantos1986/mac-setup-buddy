@@ -16,7 +16,7 @@ class CommandLineParser {
         print("Received arguments: \(arguments.joined(separator: " "))")
 
         // MARK: - JSON Configuration File
-        // Check for config file first - this overrides all other settings
+        // Check for config file first, then let explicit CLI flags override it.
         for i in 0..<arguments.count {
             if arguments[i] == "-config" || arguments[i] == "--config" ||
                arguments[i] == "-config-file" || arguments[i] == "--config-file" {
@@ -25,6 +25,23 @@ class CommandLineParser {
                     print("Using configuration file: \(arguments[i + 1])")
                 }
             }
+        }
+
+        if let configPath = config.configFilePath,
+           let loadedConfig = ConfigurationLoader.shared.loadFromJSON(path: NSString(string: configPath).expandingTildeInPath) {
+            config = loadedConfig.toCommandLineConfig()
+            config.configFilePath = configPath
+            screen = screenFromString(loadedConfig.ui?.defaultScreen) ?? screen
+            print("Loaded JSON configuration")
+        }
+
+        if arguments.contains("--preview") || arguments.contains("-preview") ||
+            arguments.contains("--preview-mode") || arguments.contains("-preview-mode") {
+            config.previewMode = true
+            config.windowWidth = max(config.windowWidth, 1180)
+            config.windowHeight = max(config.windowHeight, 780)
+            screen = .welcome
+            print("Preview Mode enabled")
         }
 
         // MARK: - Persistent Blur Control (Priority)
@@ -85,29 +102,12 @@ class CommandLineParser {
             if arguments[i] == "--screen" || arguments[i] == "-screen" {
                 if i + 1 < arguments.count {
                     let screenName = arguments[i + 1].lowercased()
-                    switch screenName {
-                    case "welcome":
-                        screen = .welcome
-                    case "email":
-                        screen = .emailInput
-                    case "networkcheck", "network-check", "network":
-                        screen = .networkCheck
-                    case "credentials", "creds", "sso":
-                        screen = .credentials
-                    case "login", "credential-login", "jamf-login", "fullscreen-login":
-                        screen = .credentialLogin
-                    case "aad", "azure", "aad-progress":
-                        screen = .aadProgress
-                        config.showAADProgress = true
-                    case "progress", "install", "installation":
-                        screen = .progress
-                    case "completion", "complete", "done":
-                        screen = .completion
-                    case "notification", "notify", "alert":
-                        screen = .notification
-                    case "error":
-                        screen = .error
-                    default:
+                    if let selectedScreen = screenFromString(screenName) {
+                        screen = selectedScreen
+                        if screen == .aadProgress {
+                            config.showAADProgress = true
+                        }
+                    } else {
                         print("WARNING: Unknown screen '\(screenName)', defaulting to welcome")
                         screen = .welcome
                     }
@@ -430,9 +430,39 @@ class CommandLineParser {
         print("Background = \(config.backgroundStyle)")
         print("Blur mode = \(config.blurMode)")
         print("Flow mode = \(config.enableFlow)")
+        print("Preview mode = \(config.previewMode)")
         print("Title = \(config.title ?? "none")")
 
         return (screen, config)
+    }
+
+    private static func screenFromString(_ value: String?) -> ViewState? {
+        guard let value else { return nil }
+
+        switch value.lowercased() {
+        case "welcome":
+            return .welcome
+        case "email", "authentication", "user-authentication":
+            return .emailInput
+        case "networkcheck", "network-check", "network":
+            return .networkCheck
+        case "credentials", "creds", "sso":
+            return .credentials
+        case "login", "credential-login", "jamf-login", "fullscreen-login":
+            return .credentialLogin
+        case "aad", "azure", "aad-progress":
+            return .aadProgress
+        case "progress", "install", "installation", "software-deployment":
+            return .progress
+        case "completion", "complete", "done", "setup-complete":
+            return .completion
+        case "notification", "notify", "alert":
+            return .notification
+        case "error", "recovery", "error-recovery":
+            return .error
+        default:
+            return nil
+        }
     }
     
     // MARK: - Parse Common Flags

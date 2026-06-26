@@ -1,0 +1,319 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/sebastiansantos1986/mac-setup-buddy/main/config/mac-setup-buddy.schema.json",
+  "title": "Mac Setup Buddy Configuration",
+  "description": "Configuration schema for Mac Setup Buddy branding, preview mode, setup screens, policies, and completion behavior.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "branding": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "companyName": {
+          "type": "string",
+          "default": "Mac Setup Buddy"
+        },
+        "logoPath": {
+          "type": "string",
+          "description": "Optional local file path for a company logo."
+        },
+        "bannerImagePath": {
+          "type": "string",
+          "description": "Optional local file path for a custom banner image. If omitted, the built-in adaptive banner is used."
+        },
+        "backgroundImagePath": {
+          "type": "string"
+        },
+        "primaryColor": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6})$",
+          "default": "#1a2744"
+        },
+        "accentColor": {
+          "type": "string",
+          "pattern": "^#([A-Fa-f0-9]{6})$",
+          "default": "#4073d6"
+        },
+        "welcomeTitle": {
+          "type": "string",
+          "default": "Welcome"
+        },
+        "welcomeMessage": {
+          "type": "string"
+        },
+        "loginMessage": {
+          "type": "string"
+        },
+        "helpContactInfo": {
+          "type": "string"
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["oktaDomain"],
+      "properties": {
+        "oktaDomain": {
+          "type": "string"
+        },
+        "allowedDomains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "requireMFA": {
+          "type": "boolean",
+          "default": true
+        },
+        "allowPasswordAuth": {
+          "type": "boolean",
+          "default": false
+        },
+        "sessionTimeout": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 60
+        }
+      }
+    },
+    "userCreation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "accountType": {
+          "type": "string",
+          "enum": ["admin", "standard"],
+          "default": "admin"
+        },
+        "usernameFormat": {
+          "type": "string",
+          "enum": ["firstLast", "firstDotLast", "email", "samAccountName"],
+          "default": "firstDotLast"
+        },
+        "hideAdminAccount": {
+          "type": "boolean",
+          "default": true
+        },
+        "syncPassword": {
+          "type": "boolean",
+          "default": true
+        },
+        "homeDirectory": {
+          "type": "string",
+          "default": "/Users/{username}"
+        },
+        "defaultShell": {
+          "type": "string",
+          "default": "/bin/zsh"
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "previewMode": {
+          "type": "boolean",
+          "default": false
+        },
+        "defaultScreen": {
+          "type": "string",
+          "enum": ["welcome", "email", "authentication", "progress", "software-deployment", "error", "error-recovery", "completion", "setup-complete", "notification", "network-check", "credential-login"],
+          "default": "welcome"
+        },
+        "showLanguageSelector": {
+          "type": "boolean",
+          "default": true
+        },
+        "showNetworkSelector": {
+          "type": "boolean",
+          "default": true
+        },
+        "showShutdownButton": {
+          "type": "boolean",
+          "default": true
+        },
+        "showRestartButton": {
+          "type": "boolean",
+          "default": true
+        },
+        "showHelpButton": {
+          "type": "boolean",
+          "default": true
+        },
+        "defaultLanguage": {
+          "type": "string"
+        },
+        "windowWidth": {
+          "type": "integer",
+          "minimum": 640,
+          "default": 1180
+        },
+        "windowHeight": {
+          "type": "integer",
+          "minimum": 480,
+          "default": 780
+        },
+        "fullscreen": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "setupSteps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "type"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "icon": {
+            "type": "string",
+            "default": "circle.fill"
+          },
+          "iconColor": {
+            "type": "string",
+            "pattern": "^#([A-Fa-f0-9]{6})$",
+            "default": "#4073d6"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["app", "policy", "script", "url", "keychain", "wait"]
+          },
+          "action": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "appPath": { "type": "string" },
+              "appBundleId": { "type": "string" },
+              "policyId": { "type": "string" },
+              "policyTrigger": { "type": "string" },
+              "scriptPath": { "type": "string" },
+              "scriptContent": { "type": "string" },
+              "url": { "type": "string" },
+              "keychainService": { "type": "string" },
+              "waitSeconds": { "type": "integer", "minimum": 0 },
+              "waitForProcess": { "type": "string" }
+            }
+          },
+          "buttonText": {
+            "type": "string",
+            "default": "Continue"
+          },
+          "required": {
+            "type": "boolean",
+            "default": false
+          },
+          "autoAdvance": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipIfInstalled": {
+            "type": "boolean",
+            "default": false
+          },
+          "skipIfMissing": {
+            "type": "boolean",
+            "default": true
+          },
+          "timeout": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 300
+          }
+        }
+      }
+    },
+    "policies": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enrollmentPolicy": { "type": "string" },
+        "postAuthPolicy": { "type": "string" },
+        "finalPolicy": { "type": "string" },
+        "jamfBinaryPath": {
+          "type": "string",
+          "default": "/usr/local/bin/jamf"
+        }
+      }
+    },
+    "completion": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "default": "Setup Complete!"
+        },
+        "message": {
+          "type": "string",
+          "default": "Your Mac is now configured and ready to use."
+        },
+        "showRestartPrompt": {
+          "type": "boolean",
+          "default": false
+        },
+        "autoLogout": {
+          "type": "boolean",
+          "default": false
+        },
+        "launchAppOnComplete": {
+          "type": "string"
+        },
+        "redirectUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "advanced": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "debugMode": {
+          "type": "boolean",
+          "default": false
+        },
+        "logPath": {
+          "type": "string",
+          "default": "/var/log/mac-setup-buddy.log"
+        },
+        "configRefreshUrl": {
+          "type": "string"
+        },
+        "bypassOnError": {
+          "type": "boolean",
+          "default": false
+        },
+        "exitCodes": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "success": { "type": "integer", "default": 0 },
+            "cancelled": { "type": "integer", "default": 1 },
+            "authFailed": { "type": "integer", "default": 2 },
+            "setupFailed": { "type": "integer", "default": 3 }
+          }
+        }
+      }
+    }
+  }
+}

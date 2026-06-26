@@ -42,6 +42,7 @@ struct SetupConfiguration: Codable {
 struct BrandingConfig: Codable {
     var companyName: String = "Mac Setup Buddy"
     var logoPath: String?
+    var bannerImagePath: String?
     var backgroundImagePath: String?
     var primaryColor: String = "#1a2744"
     var accentColor: String = "#4073d6"
@@ -49,6 +50,35 @@ struct BrandingConfig: Codable {
     var welcomeMessage: String?
     var loginMessage: String?
     var helpContactInfo: String?
+
+    init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case companyName
+        case logoPath
+        case bannerImagePath
+        case backgroundImagePath
+        case primaryColor
+        case accentColor
+        case welcomeTitle
+        case welcomeMessage
+        case loginMessage
+        case helpContactInfo
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        companyName = try values.decodeIfPresent(String.self, forKey: .companyName) ?? companyName
+        logoPath = try values.decodeIfPresent(String.self, forKey: .logoPath)
+        bannerImagePath = try values.decodeIfPresent(String.self, forKey: .bannerImagePath)
+        backgroundImagePath = try values.decodeIfPresent(String.self, forKey: .backgroundImagePath)
+        primaryColor = try values.decodeIfPresent(String.self, forKey: .primaryColor) ?? primaryColor
+        accentColor = try values.decodeIfPresent(String.self, forKey: .accentColor) ?? accentColor
+        welcomeTitle = try values.decodeIfPresent(String.self, forKey: .welcomeTitle) ?? welcomeTitle
+        welcomeMessage = try values.decodeIfPresent(String.self, forKey: .welcomeMessage)
+        loginMessage = try values.decodeIfPresent(String.self, forKey: .loginMessage)
+        helpContactInfo = try values.decodeIfPresent(String.self, forKey: .helpContactInfo)
+    }
     
     // Convert hex color to SwiftUI Color
     var primarySwiftUIColor: Color {
@@ -67,6 +97,31 @@ struct AuthenticationConfig: Codable {
     var requireMFA: Bool = true
     var allowPasswordAuth: Bool = false
     var sessionTimeout: Int = 60
+
+    enum CodingKeys: String, CodingKey {
+        case oktaDomain
+        case allowedDomains
+        case requireMFA
+        case allowPasswordAuth
+        case sessionTimeout
+    }
+
+    init(oktaDomain: String, allowedDomains: [String]? = nil, requireMFA: Bool = true, allowPasswordAuth: Bool = false, sessionTimeout: Int = 60) {
+        self.oktaDomain = oktaDomain
+        self.allowedDomains = allowedDomains
+        self.requireMFA = requireMFA
+        self.allowPasswordAuth = allowPasswordAuth
+        self.sessionTimeout = sessionTimeout
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        oktaDomain = try values.decode(String.self, forKey: .oktaDomain)
+        allowedDomains = try values.decodeIfPresent([String].self, forKey: .allowedDomains)
+        requireMFA = try values.decodeIfPresent(Bool.self, forKey: .requireMFA) ?? true
+        allowPasswordAuth = try values.decodeIfPresent(Bool.self, forKey: .allowPasswordAuth) ?? false
+        sessionTimeout = try values.decodeIfPresent(Int.self, forKey: .sessionTimeout) ?? 60
+    }
 }
 
 // MARK: - User Creation Configuration
@@ -89,6 +144,29 @@ struct UserCreationConfig: Codable {
         case firstDotLast   // "sebastian.santos"
         case email          // "sebastian.santos@example.com"
         case samAccountName // Use Okta's samAccountName if available
+    }
+
+    init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case enabled
+        case accountType
+        case usernameFormat
+        case hideAdminAccount
+        case syncPassword
+        case homeDirectory
+        case defaultShell
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        enabled = try values.decodeIfPresent(Bool.self, forKey: .enabled) ?? true
+        accountType = try values.decodeIfPresent(AccountType.self, forKey: .accountType) ?? .admin
+        usernameFormat = try values.decodeIfPresent(UsernameFormat.self, forKey: .usernameFormat) ?? .firstDotLast
+        hideAdminAccount = try values.decodeIfPresent(Bool.self, forKey: .hideAdminAccount) ?? true
+        syncPassword = try values.decodeIfPresent(Bool.self, forKey: .syncPassword) ?? true
+        homeDirectory = try values.decodeIfPresent(String.self, forKey: .homeDirectory) ?? "/Users/{username}"
+        defaultShell = try values.decodeIfPresent(String.self, forKey: .defaultShell) ?? "/bin/zsh"
     }
     
     // Format username based on configuration
@@ -121,6 +199,8 @@ struct UserCreationConfig: Codable {
 
 // MARK: - UI Configuration
 struct UIConfig: Codable {
+    var previewMode: Bool = false
+    var defaultScreen: String = "welcome"
     var showLanguageSelector: Bool = true
     var showNetworkSelector: Bool = true
     var showShutdownButton: Bool = true
@@ -130,6 +210,37 @@ struct UIConfig: Codable {
     var windowWidth: Int = 1440
     var windowHeight: Int = 900
     var fullscreen: Bool = true
+
+    init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case previewMode
+        case defaultScreen
+        case showLanguageSelector
+        case showNetworkSelector
+        case showShutdownButton
+        case showRestartButton
+        case showHelpButton
+        case defaultLanguage
+        case windowWidth
+        case windowHeight
+        case fullscreen
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        previewMode = try values.decodeIfPresent(Bool.self, forKey: .previewMode) ?? previewMode
+        defaultScreen = try values.decodeIfPresent(String.self, forKey: .defaultScreen) ?? defaultScreen
+        showLanguageSelector = try values.decodeIfPresent(Bool.self, forKey: .showLanguageSelector) ?? showLanguageSelector
+        showNetworkSelector = try values.decodeIfPresent(Bool.self, forKey: .showNetworkSelector) ?? showNetworkSelector
+        showShutdownButton = try values.decodeIfPresent(Bool.self, forKey: .showShutdownButton) ?? showShutdownButton
+        showRestartButton = try values.decodeIfPresent(Bool.self, forKey: .showRestartButton) ?? showRestartButton
+        showHelpButton = try values.decodeIfPresent(Bool.self, forKey: .showHelpButton) ?? showHelpButton
+        defaultLanguage = try values.decodeIfPresent(String.self, forKey: .defaultLanguage)
+        windowWidth = try values.decodeIfPresent(Int.self, forKey: .windowWidth) ?? windowWidth
+        windowHeight = try values.decodeIfPresent(Int.self, forKey: .windowHeight) ?? windowHeight
+        fullscreen = try values.decodeIfPresent(Bool.self, forKey: .fullscreen) ?? fullscreen
+    }
 }
 
 // MARK: - Setup Step Configuration
@@ -159,6 +270,69 @@ struct SetupStepConfig: Codable, Identifiable {
     
     var iconSwiftUIColor: Color {
         Color(hex: iconColor) ?? Color.blue
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case title
+        case description
+        case icon
+        case iconColor
+        case type
+        case action
+        case buttonText
+        case required
+        case autoAdvance
+        case skipIfInstalled
+        case skipIfMissing
+        case timeout
+    }
+
+    init(
+        id: String,
+        title: String,
+        description: String? = nil,
+        icon: String = "circle.fill",
+        iconColor: String = "#4073d6",
+        type: StepType,
+        action: StepAction? = nil,
+        buttonText: String = "Continue",
+        required: Bool = false,
+        autoAdvance: Bool = false,
+        skipIfInstalled: Bool = false,
+        skipIfMissing: Bool = true,
+        timeout: Int = 300
+    ) {
+        self.id = id
+        self.title = title
+        self.description = description
+        self.icon = icon
+        self.iconColor = iconColor
+        self.type = type
+        self.action = action
+        self.buttonText = buttonText
+        self.required = required
+        self.autoAdvance = autoAdvance
+        self.skipIfInstalled = skipIfInstalled
+        self.skipIfMissing = skipIfMissing
+        self.timeout = timeout
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        id = try values.decode(String.self, forKey: .id)
+        title = try values.decode(String.self, forKey: .title)
+        description = try values.decodeIfPresent(String.self, forKey: .description)
+        icon = try values.decodeIfPresent(String.self, forKey: .icon) ?? "circle.fill"
+        iconColor = try values.decodeIfPresent(String.self, forKey: .iconColor) ?? "#4073d6"
+        type = try values.decode(StepType.self, forKey: .type)
+        action = try values.decodeIfPresent(StepAction.self, forKey: .action)
+        buttonText = try values.decodeIfPresent(String.self, forKey: .buttonText) ?? "Continue"
+        required = try values.decodeIfPresent(Bool.self, forKey: .required) ?? false
+        autoAdvance = try values.decodeIfPresent(Bool.self, forKey: .autoAdvance) ?? false
+        skipIfInstalled = try values.decodeIfPresent(Bool.self, forKey: .skipIfInstalled) ?? false
+        skipIfMissing = try values.decodeIfPresent(Bool.self, forKey: .skipIfMissing) ?? true
+        timeout = try values.decodeIfPresent(Int.self, forKey: .timeout) ?? 300
     }
 }
 
@@ -198,6 +372,27 @@ struct CompletionConfig: Codable {
     var autoLogout: Bool = false
     var launchAppOnComplete: String?
     var redirectUrl: String?
+
+    init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case title
+        case message
+        case showRestartPrompt
+        case autoLogout
+        case launchAppOnComplete
+        case redirectUrl
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        title = try values.decodeIfPresent(String.self, forKey: .title) ?? title
+        message = try values.decodeIfPresent(String.self, forKey: .message) ?? message
+        showRestartPrompt = try values.decodeIfPresent(Bool.self, forKey: .showRestartPrompt) ?? showRestartPrompt
+        autoLogout = try values.decodeIfPresent(Bool.self, forKey: .autoLogout) ?? autoLogout
+        launchAppOnComplete = try values.decodeIfPresent(String.self, forKey: .launchAppOnComplete)
+        redirectUrl = try values.decodeIfPresent(String.self, forKey: .redirectUrl)
+    }
 }
 
 // MARK: - Advanced Configuration
@@ -207,6 +402,25 @@ struct AdvancedConfig: Codable {
     var configRefreshUrl: String?
     var bypassOnError: Bool = false
     var exitCodes: ExitCodes = ExitCodes()
+
+    init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case debugMode
+        case logPath
+        case configRefreshUrl
+        case bypassOnError
+        case exitCodes
+    }
+
+    init(from decoder: Decoder) throws {
+        let values = try decoder.container(keyedBy: CodingKeys.self)
+        debugMode = try values.decodeIfPresent(Bool.self, forKey: .debugMode) ?? debugMode
+        logPath = try values.decodeIfPresent(String.self, forKey: .logPath) ?? logPath
+        configRefreshUrl = try values.decodeIfPresent(String.self, forKey: .configRefreshUrl)
+        bypassOnError = try values.decodeIfPresent(Bool.self, forKey: .bypassOnError) ?? bypassOnError
+        exitCodes = try values.decodeIfPresent(ExitCodes.self, forKey: .exitCodes) ?? exitCodes
+    }
     
     struct ExitCodes: Codable {
         var success: Int = 0
@@ -277,7 +491,7 @@ class ConfigurationLoader {
     }
     
     // Load from JSON file
-    private func loadFromJSON(path: String) -> SetupConfiguration? {
+    func loadFromJSON(path: String) -> SetupConfiguration? {
         do {
             let data = try Data(contentsOf: URL(fileURLWithPath: path))
             let decoder = JSONDecoder()
@@ -353,7 +567,9 @@ extension SetupConfiguration {
         if let branding = branding {
             config.title = branding.companyName
             config.message = branding.loginMessage
-            config.bannerImage = branding.logoPath
+            config.bannerImage = branding.bannerImagePath
+            config.logoImage = branding.logoPath
+            config.bannerTitle = branding.companyName
             config.loginInfoMessage = branding.welcomeMessage
             config.helpContactInfo = branding.helpContactInfo
         }
@@ -371,13 +587,29 @@ extension SetupConfiguration {
         
         // UI
         if let ui = ui {
+            config.previewMode = ui.previewMode
             config.showLanguageSelector = ui.showLanguageSelector
             config.showNetworkSelector = ui.showNetworkSelector
             config.windowWidth = CGFloat(ui.windowWidth)
             config.windowHeight = CGFloat(ui.windowHeight)
             config.hideWindowControls = ui.fullscreen
         }
-        
+
+        if let setupSteps, !setupSteps.isEmpty {
+            config.installationItems = setupSteps.map { step in
+                InstallationItem(
+                    policyUUID: step.id,
+                    trigger: step.action?.policyTrigger ?? step.action?.policyId ?? step.id,
+                    name: step.title,
+                    description: step.description ?? step.type.rawValue.capitalized,
+                    icon: step.icon,
+                    iconURL: nil,
+                    status: .pending,
+                    progress: 0
+                )
+            }
+        }
+
         return config
     }
 }
