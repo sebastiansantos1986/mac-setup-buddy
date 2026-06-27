@@ -96,6 +96,11 @@ class CommandLineParser {
         }
 
         // MARK: Background Style
+        if arguments.contains("--enable-blur") || arguments.contains("-enable-blur") {
+            config.backgroundStyle = .blur
+            print("Blur background enabled")
+        }
+
         for i in 0..<arguments.count {
             if arguments[i] == "-background" || arguments[i] == "-bg" || arguments[i] == "--background" {
                 if i + 1 < arguments.count {

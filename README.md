@@ -71,6 +71,24 @@ You can also launch Preview Mode from JSON:
 open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args --config config/sample-config.json
 ```
 
+## Blur Background
+
+To test the macOS blur overlay, launch any screen with blur enabled:
+
+```bash
+open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args \
+  --screen welcome \
+  --enable-blur
+```
+
+The legacy syntax is also supported:
+
+```bash
+open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args \
+  --screen welcome \
+  --background blur
+```
+
 ## JSON Configuration
 
 The schema and sample config live in:
