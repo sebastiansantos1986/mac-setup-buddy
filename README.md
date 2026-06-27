@@ -89,6 +89,30 @@ open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args \
   --background blur
 ```
 
+## Popup Test Launcher
+
+Use the included test launcher to open real popup windows with blur, good test sizes, and sample data:
+
+```bash
+./test-popups.sh
+```
+
+You can also launch a specific popup directly:
+
+```bash
+./test-popups.sh welcome
+./test-popups.sh auth
+./test-popups.sh install
+./test-popups.sh error
+./test-popups.sh complete
+```
+
+Run every popup in sequence:
+
+```bash
+./test-popups.sh all
+```
+
 ## JSON Configuration
 
 The schema and sample config live in:
