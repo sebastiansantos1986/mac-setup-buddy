@@ -464,7 +464,7 @@ class CommandLineParser {
         switch value.lowercased() {
         case "welcome":
             return .welcome
-        case "email", "authentication", "user-authentication":
+        case "email", "auth", "authentication", "user-authentication", "user-auth":
             return .emailInput
         case "networkcheck", "network-check", "network":
             return .networkCheck
