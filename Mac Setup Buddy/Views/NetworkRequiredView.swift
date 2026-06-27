@@ -82,7 +82,22 @@ struct NetworkRequiredView: View {
                             .foregroundColor(.white.opacity(isReady ? 1 : 0.45))
                             .padding(.horizontal, 42)
                             .padding(.vertical, 13)
-                            .background(Theme.Gradients.primaryButton.opacity(isReady ? 1 : 0.35))
+                            .background(
+                                Group {
+                                    if isReady {
+                                        Theme.Gradients.primaryButton
+                                    } else {
+                                        LinearGradient(
+                                            colors: [
+                                                Theme.Brand.tertiary.opacity(0.35),
+                                                Theme.Brand.secondary.opacity(0.35)
+                                            ],
+                                            startPoint: .leading,
+                                            endPoint: .trailing
+                                        )
+                                    }
+                                }
+                            )
                             .clipShape(RoundedRectangle(cornerRadius: Theme.CornerRadius.pill))
                             .shadow(
                                 color: Theme.Brand.primary.opacity(isHoveredContinue && isReady ? 0.45 : 0.2),
