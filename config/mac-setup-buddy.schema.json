@@ -126,9 +126,22 @@
           "type": "boolean",
           "default": false
         },
+        "requireNetwork": {
+          "type": "boolean",
+          "default": false,
+          "description": "When true, setup is gated by a Network Required screen before the selected setup screen appears."
+        },
+        "networkCheckHosts": {
+          "type": "array",
+          "description": "Optional HTTP/HTTPS URLs used to confirm required services are reachable.",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
         "defaultScreen": {
           "type": "string",
-          "enum": ["welcome", "email", "authentication", "progress", "software-deployment", "error", "error-recovery", "completion", "setup-complete", "notification", "network-check", "credential-login"],
+          "enum": ["welcome", "email", "authentication", "progress", "software-deployment", "error", "error-recovery", "completion", "setup-complete", "notification", "network", "networkcheck", "network-check", "credential-login"],
           "default": "welcome"
         },
         "showLanguageSelector": {

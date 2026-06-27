@@ -13,6 +13,8 @@
   },
   "ui": {
     "previewMode": true,
+    "requireNetwork": true,
+    "networkCheckHosts": ["https://apple.com"],
     "defaultScreen": "welcome",
     "windowWidth": 1180,
     "windowHeight": 780,

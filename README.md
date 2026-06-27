@@ -16,6 +16,7 @@ The app is built with SwiftUI and supports automatic Light Mode and Dark Mode st
 - Runtime Preview Mode for reviewing screens without running setup actions
 - JSON configuration with a published schema and sample file
 - Support report export from recovery and completion screens
+- Config validation and Network Required gate for safer deployments
 - Software deployment progress view with status cards and activity stream
 - Recovery screen for retry, skip, or support handoff
 - Cleaned public project naming and package script
@@ -78,6 +79,33 @@ The schema and sample config live in:
 - [config/sample-config.json](config/sample-config.json)
 
 Use `branding.bannerImagePath` to set a custom banner. Leave it out to use the built-in adaptive Light/Dark banner.
+
+Validate a JSON config before deploying it:
+
+```bash
+"build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app/Contents/MacOS/Mac Setup Buddy" \
+  --validate-config config/sample-config.json
+```
+
+Enable the Network Required gate from JSON:
+
+```json
+{
+  "ui": {
+    "requireNetwork": true,
+    "networkCheckHosts": ["https://apple.com"]
+  }
+}
+```
+
+Or from the command line:
+
+```bash
+open "build/DerivedData/Build/Products/Debug/Mac Setup Buddy.app" --args \
+  --require-network \
+  --network-hosts https://apple.com \
+  --screen welcome
+```
 
 ## Support Reports
 

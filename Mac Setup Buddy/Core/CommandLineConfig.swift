@@ -35,6 +35,7 @@ struct CommandLineConfig {
     
     // JSON Configuration file path
     var configFilePath: String? = nil
+    var validateConfigPath: String? = nil
     var previewMode: Bool = false
     
     // NEW: Persistent Blur Mode

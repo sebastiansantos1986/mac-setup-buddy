@@ -200,6 +200,8 @@ struct UserCreationConfig: Codable {
 // MARK: - UI Configuration
 struct UIConfig: Codable {
     var previewMode: Bool = false
+    var requireNetwork: Bool = false
+    var networkCheckHosts: [String]?
     var defaultScreen: String = "welcome"
     var showLanguageSelector: Bool = true
     var showNetworkSelector: Bool = true
@@ -215,6 +217,8 @@ struct UIConfig: Codable {
 
     enum CodingKeys: String, CodingKey {
         case previewMode
+        case requireNetwork
+        case networkCheckHosts
         case defaultScreen
         case showLanguageSelector
         case showNetworkSelector
@@ -230,6 +234,8 @@ struct UIConfig: Codable {
     init(from decoder: Decoder) throws {
         let values = try decoder.container(keyedBy: CodingKeys.self)
         previewMode = try values.decodeIfPresent(Bool.self, forKey: .previewMode) ?? previewMode
+        requireNetwork = try values.decodeIfPresent(Bool.self, forKey: .requireNetwork) ?? requireNetwork
+        networkCheckHosts = try values.decodeIfPresent([String].self, forKey: .networkCheckHosts)
         defaultScreen = try values.decodeIfPresent(String.self, forKey: .defaultScreen) ?? defaultScreen
         showLanguageSelector = try values.decodeIfPresent(Bool.self, forKey: .showLanguageSelector) ?? showLanguageSelector
         showNetworkSelector = try values.decodeIfPresent(Bool.self, forKey: .showNetworkSelector) ?? showNetworkSelector
@@ -588,6 +594,8 @@ extension SetupConfiguration {
         // UI
         if let ui = ui {
             config.previewMode = ui.previewMode
+            config.enableNetworkCheck = ui.requireNetwork
+            config.networkCheckHosts = ui.networkCheckHosts
             config.showLanguageSelector = ui.showLanguageSelector
             config.showNetworkSelector = ui.showNetworkSelector
             config.windowWidth = CGFloat(ui.windowWidth)

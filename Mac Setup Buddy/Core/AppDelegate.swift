@@ -27,11 +27,19 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let pidFilePath = "/tmp/macsetupbuddy_blur.pid"
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        NSApp.setActivationPolicy(.accessory)
-        NSApp.activate(ignoringOtherApps: true)
-
         // Parse CLI arguments
         let parsed = CommandLineParser.parseArguments()
+
+        if let validateConfigPath = parsed.config.validateConfigPath {
+            let result = ConfigValidator.validate(path: validateConfigPath)
+            print(result.formattedOutput)
+            fflush(stdout)
+            Darwin.exit(result.isValid ? 0 : 1)
+            return
+        }
+
+        NSApp.setActivationPolicy(.accessory)
+        NSApp.activate(ignoringOtherApps: true)
         
         // MARK: - Handle Persistent Blur Actions FIRST
         switch parsed.config.persistentBlurAction {
@@ -83,6 +91,21 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             )
         }
 
+        let screenContent = buildScreenContent(for: screen, config: config)
+        if config.enableNetworkCheck && screen != .networkCheck {
+            return AnyView(
+                NetworkGateView(
+                    config: config,
+                    content: screenContent,
+                    onCancel: { self.exitWithCode(1) }
+                )
+            )
+        }
+
+        return screenContent
+    }
+
+    private func buildScreenContent(for screen: ViewState, config: CommandLineConfig) -> AnyView {
         switch screen {
         case .welcome:
             return AnyView(
@@ -100,15 +123,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             )
 
         case .networkCheck:
-            // NetworkCheckView not implemented yet - use notification as placeholder
             return AnyView(
-                NotificationView(
-                    title: config.title ?? "Network Check",
-                    message: config.message ?? "Checking network connectivity...",
-                    icon: "wifi",
-                    buttons: ["Continue"],
-                    onAction: { _ in
+                NetworkRequiredView(
+                    config: config,
+                    onContinue: {
                         self.closeWindowOnly()
+                    },
+                    onCancel: {
+                        self.exitWithCode(1)
                     }
                 )
             )

@@ -15,6 +15,15 @@ class CommandLineParser {
 
         print("Received arguments: \(arguments.joined(separator: " "))")
 
+        for i in 0..<arguments.count {
+            if arguments[i] == "--validate-config" || arguments[i] == "-validate-config" {
+                if i + 1 < arguments.count {
+                    config.validateConfigPath = arguments[i + 1]
+                    print("Validating configuration file: \(arguments[i + 1])")
+                }
+            }
+        }
+
         // MARK: - JSON Configuration File
         // Check for config file first, then let explicit CLI flags override it.
         for i in 0..<arguments.count {
@@ -29,8 +38,10 @@ class CommandLineParser {
 
         if let configPath = config.configFilePath,
            let loadedConfig = ConfigurationLoader.shared.loadFromJSON(path: NSString(string: configPath).expandingTildeInPath) {
+            let validateConfigPath = config.validateConfigPath
             config = loadedConfig.toCommandLineConfig()
             config.configFilePath = configPath
+            config.validateConfigPath = validateConfigPath
             screen = screenFromString(loadedConfig.ui?.defaultScreen) ?? screen
             print("Loaded JSON configuration")
         }
@@ -42,6 +53,12 @@ class CommandLineParser {
             config.windowHeight = max(config.windowHeight, 780)
             screen = .welcome
             print("Preview Mode enabled")
+        }
+
+        if arguments.contains("--require-network") || arguments.contains("-require-network") ||
+            arguments.contains("--network-required") || arguments.contains("-network-required") {
+            config.enableNetworkCheck = true
+            print("Network gate enabled")
         }
 
         // MARK: - Persistent Blur Control (Priority)
@@ -516,6 +533,14 @@ class CommandLineParser {
             case "-enableLogMonitor", "--enableLogMonitor":
                 if i + 1 < arguments.count {
                     config.enableLogMonitor = arguments[i + 1].lowercased() == "true"
+                }
+            case "-networkCheckHosts", "--networkCheckHosts", "-network-hosts", "--network-hosts":
+                if i + 1 < arguments.count {
+                    config.networkCheckHosts = arguments[i + 1]
+                        .components(separatedBy: ",")
+                        .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                        .filter { !$0.isEmpty }
+                    config.enableNetworkCheck = true
                 }
             case "-userName", "--userName", "-username":
                 if i + 1 < arguments.count { config.userName = arguments[i + 1] }

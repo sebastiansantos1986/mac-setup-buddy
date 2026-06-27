@@ -30,6 +30,12 @@ The repository includes:
 
 Use the schema in your editor to validate keys and catch typos before deployment.
 
+You can also validate a config with the app:
+
+```bash
+"Mac Setup Buddy.app/Contents/MacOS/Mac Setup Buddy" --validate-config /path/to/config.json
+```
+
 ## Preview Mode
 
 Preview Mode lets admins review the app screens without running installs, policies, scripts, or account actions.
@@ -49,6 +55,21 @@ Preview Mode can also be enabled in JSON:
   }
 }
 ```
+
+## Network Required Gate
+
+Use the Network Required gate to stop setup until the Mac is online.
+
+```json
+{
+  "ui": {
+    "requireNetwork": true,
+    "networkCheckHosts": ["https://apple.com"]
+  }
+}
+```
+
+`networkCheckHosts` is optional. If omitted, the app checks the Mac's local network state only.
 
 ## Banner Artwork
 
