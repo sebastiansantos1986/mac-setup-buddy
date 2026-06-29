@@ -48,7 +48,10 @@ MS_GRAPH_CLIENT_SECRET="${4:-${MS_GRAPH_CLIENT_SECRET:-}}"
 DEBUG_MODE="${DEBUG_MODE:-true}"
 
 DEFAULT_BLUR="true"
+PERSISTENT_BLUR="${PERSISTENT_BLUR:-true}"
 AUTO_CLOSE_SECONDS="${AUTO_CLOSE_SECONDS:-8}"
+BLUR_STARTED_BY_SCRIPT="false"
+BLUR_PID=""
 
 UI_WIDTH_WELCOME=900
 UI_HEIGHT_WELCOME=700
@@ -112,6 +115,7 @@ print_header() {
     echo " App: ${APP_BINARY:-not found yet}"
     echo " Debug Mode: $DEBUG_MODE"
     echo " Blur: $DEFAULT_BLUR"
+    echo " Persistent Blur: $PERSISTENT_BLUR"
     echo ""
 }
 
@@ -144,13 +148,51 @@ require_app() {
 }
 
 blur_args() {
-    if [[ "$DEFAULT_BLUR" == "true" ]]; then
+    if [[ "$DEFAULT_BLUR" == "true" && "$PERSISTENT_BLUR" == "true" ]]; then
+        echo "--blur-mode persistent"
+    elif [[ "$DEFAULT_BLUR" == "true" ]]; then
         echo "--enable-blur"
     fi
 }
 
+start_blur_background() {
+    require_app
+
+    if [[ "$DEFAULT_BLUR" != "true" || "$PERSISTENT_BLUR" != "true" ]]; then
+        return 0
+    fi
+
+    if [[ -n "$BLUR_PID" ]] && kill -0 "$BLUR_PID" 2>/dev/null; then
+        return 0
+    fi
+
+    echo "Starting persistent blur background..."
+    "$APP_BINARY" --blur-start --background blur &
+    BLUR_PID=$!
+    BLUR_STARTED_BY_SCRIPT="true"
+    sleep 1
+}
+
+stop_blur_background() {
+    if [[ "$BLUR_STARTED_BY_SCRIPT" != "true" ]]; then
+        return 0
+    fi
+
+    echo "Stopping persistent blur background..."
+    "$APP_BINARY" --blur-stop >/dev/null 2>&1 || true
+
+    if [[ -n "$BLUR_PID" ]] && kill -0 "$BLUR_PID" 2>/dev/null; then
+        kill "$BLUR_PID" 2>/dev/null || true
+        sleep 0.4
+    fi
+
+    BLUR_PID=""
+    BLUR_STARTED_BY_SCRIPT="false"
+}
+
 launch_popup() {
     require_app
+    start_blur_background
     echo ""
     echo "Launching: $*"
     [[ "$DEBUG_MODE" == "true" ]] && echo "Debug mode is active: no production installs will run."
@@ -160,6 +202,7 @@ launch_popup() {
 
 launch_popup_timed() {
     require_app
+    start_blur_background
     local label="$1"
     shift
 
@@ -173,6 +216,13 @@ launch_popup_timed() {
         kill "$pid" 2>/dev/null
         sleep 0.4
     fi
+}
+
+run_single_popup() {
+    trap stop_blur_background EXIT INT TERM
+    "$@"
+    stop_blur_background
+    trap - EXIT INT TERM
 }
 
 # ============================================================================
@@ -289,6 +339,13 @@ show_preview() {
 
 show_all() {
     require_app
+    local stop_blur_when_done="false"
+    if [[ "$BLUR_STARTED_BY_SCRIPT" != "true" ]]; then
+        stop_blur_when_done="true"
+        trap stop_blur_background EXIT INT TERM
+    fi
+
+    start_blur_background
     echo "Running all real popup screens."
     echo "Each screen will auto-close after ${AUTO_CLOSE_SECONDS}s."
     echo ""
@@ -302,6 +359,11 @@ show_all() {
 
     echo ""
     echo "All popup tests completed."
+
+    if [[ "$stop_blur_when_done" == "true" ]]; then
+        stop_blur_background
+        trap - EXIT INT TERM
+    fi
 }
 
 # ============================================================================
@@ -310,6 +372,8 @@ show_all() {
 
 menu() {
     require_app
+    trap stop_blur_background EXIT INT TERM
+    start_blur_background
 
     while true; do
         print_header
@@ -343,7 +407,11 @@ EOF
             8) show_aad ;;
             9) show_preview ;;
             [Aa]) show_all ;;
-            [Qq]) exit 0 ;;
+            [Qq])
+                stop_blur_background
+                trap - EXIT INT TERM
+                exit 0
+                ;;
             *) echo "Invalid selection"; sleep 1 ;;
         esac
 
@@ -354,15 +422,15 @@ EOF
 
 case "${1:-menu}" in
     menu) menu ;;
-    welcome) show_welcome ;;
-    auth|authentication) show_auth ;;
-    network|network-check) show_network ;;
-    install|progress|deployment) show_install ;;
-    error|recovery) show_error ;;
-    complete|completion|done) show_complete ;;
-    notification|notify) show_notification ;;
-    aad|aad-progress) show_aad ;;
-    preview) show_preview ;;
+    welcome) run_single_popup show_welcome ;;
+    auth|authentication) run_single_popup show_auth ;;
+    network|network-check) run_single_popup show_network ;;
+    install|progress|deployment) run_single_popup show_install ;;
+    error|recovery) run_single_popup show_error ;;
+    complete|completion|done) run_single_popup show_complete ;;
+    notification|notify) run_single_popup show_notification ;;
+    aad|aad-progress) run_single_popup show_aad ;;
+    preview) run_single_popup show_preview ;;
     all) show_all ;;
     help|-h|--help) usage ;;
     *)

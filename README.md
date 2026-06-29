@@ -97,6 +97,8 @@ Use the included test launcher to open real popup windows with blur, good test s
 ./test-popups.sh
 ```
 
+The launcher uses persistent blur by default. It starts the blur background once, swaps popup windows above it, and stops the blur only when the launcher exits.
+
 You can also launch a specific popup directly:
 
 ```bash
@@ -111,6 +113,12 @@ Run every popup in sequence:
 
 ```bash
 ./test-popups.sh all
+```
+
+To test the older per-popup blur behavior:
+
+```bash
+PERSISTENT_BLUR=false ./test-popups.sh welcome
 ```
 
 The launcher defaults to safe debug mode. For local authentication testing, you can provide Microsoft Graph values through environment variables without committing secrets:
