@@ -113,6 +113,16 @@ Run every popup in sequence:
 ./test-popups.sh all
 ```
 
+The launcher defaults to safe debug mode. For local authentication testing, you can provide Microsoft Graph values through environment variables without committing secrets:
+
+```bash
+MS_GRAPH_CLIENT_ID="..." \
+MS_GRAPH_TENANT_ID="..." \
+MS_GRAPH_CLIENT_SECRET="..." \
+DEBUG_MODE=true \
+./test-popups.sh auth
+```
+
 ## JSON Configuration
 
 The schema and sample config live in:

@@ -6,8 +6,8 @@
 #
 # Purpose:
 #   Quickly launch the real Mac Setup Buddy popup windows with good test sizes,
-#   blur enabled, and sample data. This is for UI review only; it does not run
-#   production installs or policies.
+#   blur enabled, and sample data. Debug mode is enabled by default so this can
+#   be used for UI/authentication testing without running production installs.
 #
 # Usage:
 #   ./test-popups.sh
@@ -30,6 +30,22 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 APP_NAME="Mac Setup Buddy"
 APP_BINARY="${MAC_SETUP_BUDDY_APP:-}"
+
+# Azure AD / Microsoft Graph Credentials
+#
+# These are intentionally blank by default so secrets are never committed.
+# For Jamf, pass the client secret as parameter 4. For local testing, export
+# the values before running this script.
+MS_GRAPH_CLIENT_ID="${MS_GRAPH_CLIENT_ID:-}"
+MS_GRAPH_TENANT_ID="${MS_GRAPH_TENANT_ID:-}"
+# MS_GRAPH_CLIENT_SECRET="${4:-}"
+MS_GRAPH_CLIENT_SECRET="${4:-${MS_GRAPH_CLIENT_SECRET:-}}"
+
+# Debug Mode
+#
+# Keep this true for popup/authentication testing. The launcher uses simulated
+# install data in debug mode and does not run production install commands.
+DEBUG_MODE="${DEBUG_MODE:-true}"
 
 DEFAULT_BLUR="true"
 AUTO_CLOSE_SECONDS="${AUTO_CLOSE_SECONDS:-8}"
@@ -94,6 +110,7 @@ print_header() {
     echo " Mac Setup Buddy - Popup Test Launcher"
     echo "============================================================"
     echo " App: ${APP_BINARY:-not found yet}"
+    echo " Debug Mode: $DEBUG_MODE"
     echo " Blur: $DEFAULT_BLUR"
     echo ""
 }
@@ -136,6 +153,7 @@ launch_popup() {
     require_app
     echo ""
     echo "Launching: $*"
+    [[ "$DEBUG_MODE" == "true" ]] && echo "Debug mode is active: no production installs will run."
     echo ""
     "$APP_BINARY" "$@"
 }
@@ -146,6 +164,7 @@ launch_popup_timed() {
     shift
 
     echo "Showing $label for ${AUTO_CLOSE_SECONDS}s..."
+    [[ "$DEBUG_MODE" == "true" ]] && echo "Debug mode is active: no production installs will run."
     "$APP_BINARY" "$@" &
     local pid=$!
     sleep "$AUTO_CLOSE_SECONDS"
@@ -173,6 +192,13 @@ show_welcome() {
 }
 
 show_auth() {
+    if [[ "$DEBUG_MODE" == "true" ]]; then
+        echo "Authentication popup test is using sample identity data."
+    elif [[ -z "$MS_GRAPH_CLIENT_ID" || -z "$MS_GRAPH_TENANT_ID" || -z "$MS_GRAPH_CLIENT_SECRET" ]]; then
+        echo "WARNING: Microsoft Graph credentials are not fully configured."
+        echo "Set MS_GRAPH_CLIENT_ID, MS_GRAPH_TENANT_ID, and MS_GRAPH_CLIENT_SECRET."
+    fi
+
     launch_popup \
         --screen auth \
         $(blur_args) \
@@ -192,6 +218,10 @@ show_network() {
 }
 
 show_install() {
+    if [[ "$DEBUG_MODE" == "true" ]]; then
+        echo "Install popup test is using simulated policy data."
+    fi
+
     launch_popup \
         --screen install \
         $(blur_args) \
